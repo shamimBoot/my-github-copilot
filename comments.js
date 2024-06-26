@@ -1,32 +1,12 @@
 // create web server
-var express = require('express');
-var app = express();
-var bodyParser = require('body-parser');
-var fs = require('fs');
-var path = require('path');
-var commentsPath = path.join(__dirname, 'comments.json');
+const express = require('express');
+const app = express();
 
-app.use(express.static(__dirname + '/public'));
-app.use(bodyParser.json());
+// create server
+const http = require('http');
+const server = http.createServer(app);
 
-// get comments
-app.get('/api/comments', function(req, res) {
-  fs.readFile(commentsPath, function(err, data) {
-    if (err) {
-      console.error(err);
-      process.exit(1);
-    }
-    res.json(JSON.parse(data));
-  });
-});
+// create websocket server
+const WebSocket = require('ws');
+const wss = new WebSocket.Server({ server });
 
-// add comments
-app.post('/api/comments', function(req, res) {
-  fs.readFile(commentsPath, function(err, data) {
-    if (err) {
-      console.error(err);
-      process.exit(1);
-    }
-    var comments = JSON.parse(data);
-    var newComment = {
-      id: Date.now(),
